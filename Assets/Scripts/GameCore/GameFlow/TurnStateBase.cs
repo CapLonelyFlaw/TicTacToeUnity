@@ -21,8 +21,10 @@ namespace GameCore
 
         public virtual void ResolveOrder()
         {
+            //if player loose he change turn state
             if (_playerState == PlayerStateType.Loose)
                 ChangeTurnState();
+            //if tie, turn goes to the player who turns second
             if (_playerState == PlayerStateType.Tie && IsFirst)
                 ChangeTurnState();
         }
