@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.SharedLib.UI.Animations;
+﻿using System;
+using Assets.Scripts.SharedLib.UI.Animations;
 using GameCore;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -27,10 +28,13 @@ public class ResultsPopUp : MonoBehaviour
     public void OnMenuClick()
     {
         SceneManager.LoadSceneAsync(GameConfig.Instance.MainSceneName);
-        SceneManager.sceneLoaded += (arg0, mode) =>
-        {
-            SceneManager.UnloadScene(GameConfig.Instance.GameSceneName);
-        };
+        SceneManager.sceneLoaded += SceneManagerOnSceneLoaded;
+    }
+
+    private void SceneManagerOnSceneLoaded(Scene arg0, LoadSceneMode loadSceneMode)
+    {
+        SceneManager.UnloadScene(GameConfig.Instance.GameSceneName);
+        SceneManager.sceneLoaded -= SceneManagerOnSceneLoaded;
     }
 
     public void OnTryAgainClick()
