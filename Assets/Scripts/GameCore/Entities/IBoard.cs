@@ -7,6 +7,7 @@ namespace GameCore
     public interface IBoard
     {
         ActionWrapper<int, int> OnPiecePlaced { get; }
+        PieceType[] Slots { get; }
         List<int> GetOpenSlots();
         int[] GetWinningLine();
         IBoard Clone();

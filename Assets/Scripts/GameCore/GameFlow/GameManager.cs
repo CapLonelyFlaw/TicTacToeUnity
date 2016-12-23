@@ -44,7 +44,12 @@ namespace GameCore
         public void Initialize(ActionWrapper<int> onSlotActivated)
         {
             MyPlayer = new HumanPlayer(onSlotActivated);
-            var computerPlayer = new ComputerPlayer(new MinMaxAICore(), GameBoard, _difficulty);
+
+            IArtificialCore artificialCore = new MinMaxAICore();
+            if(_difficulty == DifficultyType.Invincible)
+                artificialCore = new HeuristicsArtificialCore();
+
+            var computerPlayer = new ComputerPlayer(artificialCore, GameBoard, _difficulty);
 
             _gameState.ComputerTurnState.Player = computerPlayer;
             _gameState.HumanTurnState.Player = MyPlayer;
@@ -56,6 +61,7 @@ namespace GameCore
         /// <returns>an event that says when the game ends, and contains a link to the winner and winner line indexes</returns>
         public ActionWrapper<IPlayer, int[]> Start()
         {
+            _gameState.Init();
             _gameState.ResolveOrder();
             _gameState.Turn();
 

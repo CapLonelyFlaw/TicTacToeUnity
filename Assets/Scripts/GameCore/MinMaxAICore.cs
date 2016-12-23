@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GameCore
 {
@@ -27,7 +29,37 @@ namespace GameCore
         {
             _checkDepth = checkDepth;
             _playPiece = playPiece;
+
+            var openSlotsCount = activeBoard.GetOpenSlots().Count;
+            if (openSlotsCount == activeBoard.Slots.Count() ||
+                openSlotsCount == activeBoard.Slots.Count() - 1)
+            {
+                return PlaceToRandomSlot(activeBoard, playPiece);
+            }
+            //use mini max for second+ steps
             return ResolveMiniMax(activeBoard, 0, true);
+        }
+
+        private SlotMark PlaceToRandomSlot(IBoard activeBoard, PieceType playPiece)
+        {
+            var openSlots = activeBoard.GetOpenSlots();
+
+            //place to center if we can
+            if (openSlots.Exists(i => i == 4))
+                return new SlotMark()
+                {
+                    Mark = (int)playPiece,
+                    Slot = 4,
+                };
+
+            //or random turn on corner slots
+            Random.InitState(DateTime.Now.Millisecond);
+            openSlots = openSlots.Intersect(new int[] { 0, 2, 6, 8 }).ToList();
+            return new SlotMark()
+            {
+                Mark = (int)playPiece,
+                Slot = openSlots[Random.Range(0, openSlots.Count - 1)],
+            };
         }
 
         private SlotMark ResolveMiniMax(IBoard activeBoard, int depth, bool aiTurn)

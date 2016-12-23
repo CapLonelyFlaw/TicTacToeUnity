@@ -40,6 +40,11 @@ namespace GameCore
         {
             get { return _slots.Count(x => x == PieceType.Empty); }
         }
+        
+        public PieceType[] Slots
+        {
+            get { return new List<PieceType>(_slots).ToArray(); }
+        }
 
         #endregion
 
@@ -149,6 +154,10 @@ namespace GameCore
                     // check diagonal right->left
                     return DetermineIfLineUsingOnePiece(2, 4, 6);
                 case 3:
+                    if (DetermineIfLineUsingOnePiece(6, 7, 8))
+                    {
+                        return true;
+                    }
                     // check horizontal.
                     return DetermineIfLineUsingOnePiece(3, 4, 5);
                 default:

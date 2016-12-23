@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Helpers;
 using JetBrains.Annotations;
 using Random = UnityEngine.Random;
@@ -29,7 +30,6 @@ namespace GameCore
         private IArtificialCore _artificialCore;
         private IBoard _board;
         private DifficultyType _difficulty;
-        private bool _firstStep;
 
         #endregion
 
@@ -39,52 +39,15 @@ namespace GameCore
             _artificialCore = artificialCore;
             _board = board;
             _difficulty = difficultyType;
-            _firstStep = true;
         }
 
         public void MakeTurn()
         {
-            //some hack for first step =(
-            var slot = new SlotMark();
-            if (_firstStep)
-            {
-                PlaceToRandomSlot();
-            }
-            //use mini max for second+ steps
-            else
-            {
-                slot = _artificialCore.GetBestSlot(_board, GameConfig.Instance.GetSearchDepthByDifficulty(_difficulty),
-                PieceType);
-                slot.Mark = (int)PieceType;
-                _onTurnMade.Dispatch(slot);
-            }
-
-            
-        }
-
-        private void PlaceToRandomSlot()
-        {
-            var openSlots = _board.GetOpenSlots();
-            //place to center if we can
-            SlotMark slot;
-            if (openSlots.Exists(i => i == 4))
-                slot = new SlotMark()
-                {
-                    Mark = (int)PieceType,
-                    Slot = 4,
-                };
-            else
-            {
-                //or random turn on border slots
-                Random.InitState(DateTime.Now.Millisecond);
-                slot = new SlotMark()
-                {
-                    Mark = (int)PieceType,
-                    Slot = openSlots[Random.Range(0, openSlots.Count - 1)],
-                };
-            }
+            var slot = _artificialCore.GetBestSlot(_board, GameConfig.Instance.GetSearchDepthByDifficulty(_difficulty),
+            PieceType);
+            slot.Mark = (int)PieceType;
             _onTurnMade.Dispatch(slot);
-            _firstStep = false;
+            
         }
     }
 }

@@ -30,6 +30,11 @@ namespace GameCore
 
         #endregion
 
+        public void Init()
+        {
+            OnGameEnd = new ActionWrapper<IPlayer, int[]>();
+        }
+
         public void ResolveOrder()
         {
             //human turn firs by default
